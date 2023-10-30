@@ -64,7 +64,7 @@ def timeScheduler(a_schedule, b_schedule, a_login: list, b_login: list, duration
         if a_start > end or b_start > end:
             break
     
-    return result
+    return [[str(int(a[0])) + ":" + str(int((a[0] - int(a[0]))*60)).zfill(2), str(int(a[1])) + ":" + str(int((a[1] - int(a[1]))*60)).zfill(2)] for a in result]
 
 
 
