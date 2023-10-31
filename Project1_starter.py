@@ -67,7 +67,10 @@ def timeScheduler(a_schedule, b_schedule, a_login: list, b_login: list, duration
     return [[str(int(a[0])) + ":" + str(int((a[0] - int(a[0]))*60)).zfill(2), str(int(a[1])) + ":" + str(int((a[1] - int(a[1]))*60)).zfill(2)] for a in result]
 
 
-
+#This is placed here to read the input file
+#Will complete once we've determined how to account for more than 2 people.
+input = open('input.txt', 'r')
+Lines = input.readlines()
 
 person1_Schedule = [['7:00', '8:30'],  ['12:00', '13:00'],  ['16:00', '18:00']]
 person1_DailyAct = ['9:00', '19:00']
