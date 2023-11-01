@@ -1,67 +1,68 @@
+from rich import print
+
+def merge_two_sorted_lists(list1, list2):
+    result = []
+    i = j = 0
+    while i < len(list1) and j < len(list2):
+        if list1[i] < list2[j]:
+            result.append(list1[i])
+            i += 1
+        else:
+            result.append(list2[j])
+            j += 1
+    result.extend(list1[i:])
+    result.extend(list2[j:])
+    return result
+
 def timeScheduler(list_schedules, list_daily_acts, duration: int):
     duration = float(duration)/60
-
-    schedules = []
     
-    while list_schedules:
-        min_vals = [lst[0] for lst in list_schedules]
-        min_index = min(range(len(min_vals)), key=min_vals.__getitem__)
-        schedules.append(list_schedules[min_index].pop(0))
-        
-        if not list_schedules[min_index]:
-            list_schedules.pop(min_index)
-    
-
-# Example usage:
-    print(schedules)
-
-    for start, end in list_schedules:
-        start = start.split(":")
-        start = float(start[0]) + float(start[1])/60
-        end = end.split(":")
-        end = float(end[0]) + float(end[1])/60
-        schedules.append([start, end])
-    print (schedules)
-    print(list_daily_acts)
-    
-    list_daily_acts = [[float(time.split(':')[0]) + float(time.split(':')[1]) / 60 for time in sublist] for sublist in list_daily_acts]
-    print(list_daily_acts)
+    while len(list_schedules) > 1:
+        merged_lists = []
+        for i in range(0, len(list_schedules), 2):
+            if i + 1 < len(list_schedules):
+                merged_lists.append(merge_two_sorted_lists(list_schedules[i], list_schedules[i + 1]))
+            else:
+                merged_lists.append(list_schedules[i])
+        list_schedules = merged_lists
+    list_schedules = list_schedules[0]
 
 
     # start is the max of a_login[0] and b_login[0]
     # end is the min of a_login[1] and b_login[1]
     start = max(act[0] for act in list_daily_acts)
     end = min(act[1] for act in list_daily_acts)
-
+    
     #add final event to schedule at logoff time
-    schedules.append([end, end])
+    list_schedules.append([end, end])
 
     #create result list, and indexes for a_times and b_times
     result = []
     idx = 0
 
-
-    while idx < len(schedules):
+    while idx < len(list_schedules):
         # current a and b intervals are separated into a_start/b_start and a_end/b_end
-        curr_start, curr_end = schedules[idx]
+        curr_start, curr_end = list_schedules[idx]
         
 
         # if a_end < start, then a interval is before the start
-        if curr_end < start:
+        if curr_start < start:
             idx += 1
             continue
         
         # check if there is a big enough gap in the schedule
-        if min(curr_start, end)-start >= duration:
+        if min(curr_start, end) - start >= duration:
             result.append([start, min(curr_start, end)])
+
+            
         
         # update start to the end of the interval that ends first
+        start = curr_end
         idx += 1
         
         #if we're past logoff time, then end the loop
         if curr_start > end:
             break
-    
     return [[str(int(a[0])) + ":" + str(int((a[0] - int(a[0]))*60)).zfill(2), str(int(a[1])) + ":" + str(int((a[1] - int(a[1]))*60)).zfill(2)] for a in result]
 
 
@@ -76,16 +77,15 @@ person1_DailyAct = ['9:00', '19:00']
 person2_Schedule = [['9:00', '10:30'],  ['12:20', '13:30'],  ['14:00', '15:00'], ['16:00', '17:00' ]]
 person2_DailyAct = ['9:00', '18:30']
 
-duration_of_meeting = 30
-
+def formatLists(schedules, dailyActs):
+    schedules = [[[(lambda pair: int(pair[0]) + (int(pair[1]) / 60))(l.split(":")), (lambda pair: int(pair[0]) + (int(pair[1]) / 60))(r.split(":"))] for l, r in sched] for sched in schedules]
+    dailyActs = [[float(time.split(':')[0]) + float(time.split(':')[1]) / 60 for time in sublist] for sublist in dailyActs]
+    return schedules, dailyActs
 
 schedules = [person1_Schedule, person2_Schedule]
-list_schedules = [lst for lst in schedules]
-
 dailyActs = [person1_DailyAct, person2_DailyAct]
-list_dailyActs = [act for act in dailyActs]
+duration_of_meeting = 30
 
-#print(list_dailyActs)
+schedules, dailyActs = formatLists(schedules, dailyActs)
 
-
-print(timeScheduler(list_schedules, list_dailyActs, duration_of_meeting))
+print(timeScheduler(schedules, dailyActs, duration_of_meeting))
