@@ -14,9 +14,10 @@ def merge_two_sorted_lists(list1, list2):
     result.extend(list2[j:])
     return result
 
-def timeScheduler(list_schedules, list_daily_acts, duration: int):
+def timeScheduler(list_schedules: list, list_daily_acts: list, duration: int):
     duration = float(duration)/60
     
+    #merge lists of schedules into one list
     while len(list_schedules) > 1:
         merged_lists = []
         for i in range(0, len(list_schedules), 2):
@@ -64,8 +65,10 @@ def timeScheduler(list_schedules, list_daily_acts, duration: int):
     return [[str(int(a[0])) + ":" + str(int((a[0] - int(a[0]))*60)).zfill(2), str(int(a[1])) + ":" + str(int((a[1] - int(a[1]))*60)).zfill(2)] for a in result]
 
 def formatLists(schedules, dailyActs):
+    print(schedules, dailyActs)
     schedules = [[[(lambda pair: int(pair[0]) + (int(pair[1]) / 60))(l.split(":")), (lambda pair: int(pair[0]) + (int(pair[1]) / 60))(r.split(":"))] for l, r in sched] for sched in schedules]
     dailyActs = [[float(time.split(':')[0]) + float(time.split(':')[1]) / 60 for time in sublist] for sublist in dailyActs]
+    print(schedules, dailyActs)
     return schedules, dailyActs
 
 #This is placed here to read the input file
@@ -74,24 +77,29 @@ input = open('input.txt', 'r')
 Lines = input.readlines()
 
 
-input = """
-person1_Schedule = [['7:00', '8:30'],  ['12:00', '13:00'],  ['16:00', '18:00']]
-person1_DailyAct = ['9:00', '19:00']
-
-person2_Schedule = [['9:00', '10:30'],  ['12:20', '13:30'],  ['14:00', '15:00'], ['16:00', '17:00' ]]
-person2_DailyAct = ['9:00', '18:30']
-
-person3_Schedule = [['8:00', '9:00'],  ['12:00', '13:00'],  ['16:00', '17:00']]
-person3_DailyAct = ['11:00', '18:00']
-"""
-
-print(input)
-for line in input.splitlines():
-    exec(line)
-
-schedules = [person1_Schedule, person2_Schedule, person3_Schedule]
-dailyActs = [person1_DailyAct, person2_DailyAct, person3_DailyAct]
+case1 = """
 duration_of_meeting = 30
+# person1_Schedule = [['7:00', '8:30'],  ['12:00', '13:00'],  ['16:00', '18:00']]
+# person1_DailyAct = ['9:00', '19:00']
+
+# person2_Schedule = [['9:00', '10:30'],  ['12:20', '13:30'],  ['14:00', '15:00'], ['16:00', '17:00' ]]
+# person2_DailyAct = ['9:00', '18:30']
+
+# person3_Schedule = [['8:00', '9:00'],  ['12:00', '13:00'],  ['16:00', '17:00']]
+# person3_DailyAct = ['11:00', '18:00']
+schedules = [[['7:00', '8:30'],  ['12:00', '13:00'],  ['16:00', '18:00']], [['9:00', '10:30'],  ['12:20', '13:30'],  ['14:00', '15:00'], ['16:00', '17:00']], [['8:00', '9:00'],  ['12:00', '13:00'],  ['16:00', '17:00']]]
+dailyActs = [ ['9:00', '19:00'], ['9:00', '18:30'], ['11:00', '18:00'] ]
+"""
+print(input)
+
+for line in case1.splitlines():
+    exec(line)
+    
+
+
+# schedules = [person1_Schedule, person2_Schedule, person3_Schedule]
+# dailyActs = [person1_DailyAct, person2_DailyAct, person3_DailyAct]
+# duration_of_meeting = 30
 
 schedules, dailyActs = formatLists(schedules, dailyActs)
 
