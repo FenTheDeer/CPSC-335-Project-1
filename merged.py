@@ -73,6 +73,8 @@ def formatLists(schedules, dailyActs):
 input = open('input.txt', 'r')
 Lines = input.readlines()
 
+
+input = """
 person1_Schedule = [['7:00', '8:30'],  ['12:00', '13:00'],  ['16:00', '18:00']]
 person1_DailyAct = ['9:00', '19:00']
 
@@ -81,8 +83,11 @@ person2_DailyAct = ['9:00', '18:30']
 
 person3_Schedule = [['8:00', '9:00'],  ['12:00', '13:00'],  ['16:00', '17:00']]
 person3_DailyAct = ['11:00', '18:00']
+"""
 
-
+print(input)
+for line in input.splitlines():
+    exec(line)
 
 schedules = [person1_Schedule, person2_Schedule, person3_Schedule]
 dailyActs = [person1_DailyAct, person2_DailyAct, person3_DailyAct]
