@@ -26,8 +26,7 @@ def timeScheduler(list_schedules, list_daily_acts, duration: int):
                 merged_lists.append(list_schedules[i])
         list_schedules = merged_lists
     list_schedules = list_schedules[0]
-
-
+    
     # start is the max of a_login[0] and b_login[0]
     # end is the min of a_login[1] and b_login[1]
     start = max(act[0] for act in list_daily_acts)
@@ -43,19 +42,17 @@ def timeScheduler(list_schedules, list_daily_acts, duration: int):
     while idx < len(list_schedules):
         # current a and b intervals are separated into a_start/b_start and a_end/b_end
         curr_start, curr_end = list_schedules[idx]
-        
 
         # if a_end < start, then a interval is before the start
         if curr_start < start:
             idx += 1
+            start = max(curr_end, start)
             continue
         
         # check if there is a big enough gap in the schedule
         if min(curr_start, end) - start >= duration:
             result.append([start, min(curr_start, end)])
 
-            
-        
         # update start to the end of the interval that ends first
         start = curr_end
         idx += 1
@@ -63,8 +60,13 @@ def timeScheduler(list_schedules, list_daily_acts, duration: int):
         #if we're past logoff time, then end the loop
         if curr_start > end:
             break
+    
     return [[str(int(a[0])) + ":" + str(int((a[0] - int(a[0]))*60)).zfill(2), str(int(a[1])) + ":" + str(int((a[1] - int(a[1]))*60)).zfill(2)] for a in result]
 
+def formatLists(schedules, dailyActs):
+    schedules = [[[(lambda pair: int(pair[0]) + (int(pair[1]) / 60))(l.split(":")), (lambda pair: int(pair[0]) + (int(pair[1]) / 60))(r.split(":"))] for l, r in sched] for sched in schedules]
+    dailyActs = [[float(time.split(':')[0]) + float(time.split(':')[1]) / 60 for time in sublist] for sublist in dailyActs]
+    return schedules, dailyActs
 
 #This is placed here to read the input file
 #Will complete once we've determined how to account for more than 2 people.
@@ -77,13 +79,13 @@ person1_DailyAct = ['9:00', '19:00']
 person2_Schedule = [['9:00', '10:30'],  ['12:20', '13:30'],  ['14:00', '15:00'], ['16:00', '17:00' ]]
 person2_DailyAct = ['9:00', '18:30']
 
-def formatLists(schedules, dailyActs):
-    schedules = [[[(lambda pair: int(pair[0]) + (int(pair[1]) / 60))(l.split(":")), (lambda pair: int(pair[0]) + (int(pair[1]) / 60))(r.split(":"))] for l, r in sched] for sched in schedules]
-    dailyActs = [[float(time.split(':')[0]) + float(time.split(':')[1]) / 60 for time in sublist] for sublist in dailyActs]
-    return schedules, dailyActs
+person3_Schedule = [['8:00', '9:00'],  ['12:00', '13:00'],  ['16:00', '17:00']]
+person3_DailyAct = ['11:00', '18:00']
 
-schedules = [person1_Schedule, person2_Schedule]
-dailyActs = [person1_DailyAct, person2_DailyAct]
+
+
+schedules = [person1_Schedule, person2_Schedule, person3_Schedule]
+dailyActs = [person1_DailyAct, person2_DailyAct, person3_DailyAct]
 duration_of_meeting = 30
 
 schedules, dailyActs = formatLists(schedules, dailyActs)
