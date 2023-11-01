@@ -65,35 +65,30 @@ def timeScheduler(list_schedules: list, list_daily_acts: list, duration: int):
     return [[str(int(a[0])) + ":" + str(int((a[0] - int(a[0]))*60)).zfill(2), str(int(a[1])) + ":" + str(int((a[1] - int(a[1]))*60)).zfill(2)] for a in result]
 
 def formatLists(schedules, dailyActs):
-    print(schedules, dailyActs)
     schedules = [[[(lambda pair: int(pair[0]) + (int(pair[1]) / 60))(l.split(":")), (lambda pair: int(pair[0]) + (int(pair[1]) / 60))(r.split(":"))] for l, r in sched] for sched in schedules]
     dailyActs = [[float(time.split(':')[0]) + float(time.split(':')[1]) / 60 for time in sublist] for sublist in dailyActs]
-    print(schedules, dailyActs)
     return schedules, dailyActs
 
 #This is placed here to read the input file
 #Will complete once we've determined how to account for more than 2 people.
+
 input = open('input.txt', 'r')
+print(input)
 Lines = input.readlines()
 
 
-case1 = """
+example_test_case = """
 duration_of_meeting = 30
-# person1_Schedule = [['7:00', '8:30'],  ['12:00', '13:00'],  ['16:00', '18:00']]
-# person1_DailyAct = ['9:00', '19:00']
-
-# person2_Schedule = [['9:00', '10:30'],  ['12:20', '13:30'],  ['14:00', '15:00'], ['16:00', '17:00' ]]
-# person2_DailyAct = ['9:00', '18:30']
-
-# person3_Schedule = [['8:00', '9:00'],  ['12:00', '13:00'],  ['16:00', '17:00']]
-# person3_DailyAct = ['11:00', '18:00']
-schedules = [[['7:00', '8:30'],  ['12:00', '13:00'],  ['16:00', '18:00']], [['9:00', '10:30'],  ['12:20', '13:30'],  ['14:00', '15:00'], ['16:00', '17:00']], [['8:00', '9:00'],  ['12:00', '13:00'],  ['16:00', '17:00']]]
+schedules = [
+                [['7:00', '8:30'],  ['12:00', '13:00'],  ['16:00', '18:00']],
+                [['9:00', '10:30'],  ['12:20', '13:30'],  ['14:00', '15:00'], ['16:00', '17:00']],
+                [['8:00', '9:00'],  ['12:00', '13:00'],  ['16:00', '17:00']]
+            ]
 dailyActs = [ ['9:00', '19:00'], ['9:00', '18:30'], ['11:00', '18:00'] ]
 """
-print(input)
 
-for line in case1.splitlines():
-    exec(line)
+#for line in case1.splitlines():
+exec(example_test_case)
     
 
 
