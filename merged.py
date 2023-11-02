@@ -1,5 +1,3 @@
-from rich import print
-
 def merge_two_sorted_lists(list1, list2):
     result = []
     i = j = 0
@@ -69,33 +67,18 @@ def formatLists(schedules, dailyActs):
     dailyActs = [[float(time.split(':')[0]) + float(time.split(':')[1]) / 60 for time in sublist] for sublist in dailyActs]
     return schedules, dailyActs
 
-#This is placed here to read the input file
-#Will complete once we've determined how to account for more than 2 people.
 
-input = open('input.txt', 'r')
-print(input)
-Lines = input.readlines()
+#Opens up the file and checks how many testcases there are
+#to put in "count" variable
+with open('input.txt') as f:
+    contents = f.read()
+    count = contents.count("test_case")
 
-
-example_test_case = """
-duration_of_meeting = 30
-schedules = [
-                [['7:00', '8:30'],  ['12:00', '13:00'],  ['16:00', '18:00']],
-                [['9:00', '10:30'],  ['12:20', '13:30'],  ['14:00', '15:00'], ['16:00', '17:00']],
-                [['8:00', '9:00'],  ['12:00', '13:00'],  ['16:00', '17:00']]
-            ]
-dailyActs = [ ['9:00', '19:00'], ['9:00', '18:30'], ['11:00', '18:00'] ]
-"""
-
-#for line in case1.splitlines():
-exec(example_test_case)
-    
-
-
-# schedules = [person1_Schedule, person2_Schedule, person3_Schedule]
-# dailyActs = [person1_DailyAct, person2_DailyAct, person3_DailyAct]
-# duration_of_meeting = 30
-
-schedules, dailyActs = formatLists(schedules, dailyActs)
-
-print(timeScheduler(schedules, dailyActs, duration_of_meeting))
+#Reads while file and executes it into the terminal
+exec(open('input.txt').read())
+for i in range(1, count+1):
+    #Executes the contents of the variables in input.txt into the terminal to get schedules.
+    exec(globals()['test_case' + str(i)])
+    schedules, dailyActs = formatLists(schedules, dailyActs)
+    #Executes algorithm in order to solve problem
+    print(timeScheduler(schedules, dailyActs, duration_of_meeting))
