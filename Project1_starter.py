@@ -1,82 +1,83 @@
-def timeScheduler(a_schedule, b_schedule, a_login: list, b_login: list, duration: int):
-    duration = float(duration)/60
-    a_times = []
-    for start, end in a_schedule:
-        start = start.split(":")
-        start = float(start[0]) + float(start[1])/60
-        end = end.split(":")
-        end = float(end[0]) + float(end[1])/60
-        a_times.append([start, end])
-    
-    b_times = []
-    for start, end in b_schedule:
-        start = start.split(":")
-        start = float(start[0]) + float(start[1])/60
-        end = end.split(":")
-        end = float(end[0]) + float(end[1])/60
-        b_times.append([start, end])
-    
-    a_login = [float(int(hour) + int(minutes)/60) for hour, minutes in [a.split(":") for a in a_login]]
-    b_login = [float(int(hour) + int(minutes)/60) for hour, minutes in [b.split(":") for b in b_login]]
-    
-    #add final event to schedule at logoff time
-    a_times.append([a_login[1], a_login[1]])
-    b_times.append([b_login[1], b_login[1]])
+def merge_two_sorted_lists(list1, list2):
+    result = []
+    i = j = 0
+    while i < len(list1) and j < len(list2):
+        if list1[i] < list2[j]:
+            result.append(list1[i])
+            i += 1
+        else:
+            result.append(list2[j])
+            j += 1
+    result.extend(list1[i:])
+    result.extend(list2[j:])
+    return result
 
+def timeScheduler(list_schedules: list, list_daily_acts: list, duration: int):
+    duration = float(duration)/60
+    
+    #merge lists of schedules into one list
+    while len(list_schedules) > 1:
+        merged_lists = []
+        for i in range(0, len(list_schedules), 2):
+            if i + 1 < len(list_schedules):
+                merged_lists.append(merge_two_sorted_lists(list_schedules[i], list_schedules[i + 1]))
+            else:
+                merged_lists.append(list_schedules[i])
+        list_schedules = merged_lists
+    list_schedules = list_schedules[0]
+    
     # start is the max of a_login[0] and b_login[0]
     # end is the min of a_login[1] and b_login[1]
-    start = max(a_login[0], b_login[0])
-    end = min(a_login[1], b_login[1])
+    start = max(act[0] for act in list_daily_acts)
+    end = min(act[1] for act in list_daily_acts)
+    
+    #add final event to schedule at logoff time
+    list_schedules.append([end, end])
 
     #create result list, and indexes for a_times and b_times
     result = []
-    idx_a = 0
-    idx_b = 0
+    idx = 0
 
-    while idx_a < len(a_times) and idx_b < len(b_times):
+    while idx < len(list_schedules):
         # current a and b intervals are separated into a_start/b_start and a_end/b_end
-        a_start, a_end = a_times[idx_a]
-        b_start, b_end = b_times[idx_b]
+        curr_start, curr_end = list_schedules[idx]
 
         # if a_end < start, then a interval is before the start
-        if a_end < start:
-            idx_a += 1
-            continue
-
-        # if b_end < start, then b interval is before the start
-        if b_end < start:
-            idx_b += 1
+        if curr_start < start:
+            idx += 1
+            start = max(curr_end, start)
             continue
         
         # check if there is a big enough gap in the schedule
-        if min(a_start, b_start, end)-start >= duration:
-            result.append([start, min(a_start, b_start, end)])
-        
+        if min(curr_start, end) - start >= duration:
+            result.append([start, min(curr_start, end)])
+
         # update start to the end of the interval that ends first
-        if a_end < b_end:
-            start = a_end
-            idx_a += 1
-        else:
-            start = b_end
-            idx_b += 1
+        start = curr_end
+        idx += 1
         
         #if we're past logoff time, then end the loop
-        if a_start > end or b_start > end:
+        if curr_start > end:
             break
     
     return [[str(int(a[0])) + ":" + str(int((a[0] - int(a[0]))*60)).zfill(2), str(int(a[1])) + ":" + str(int((a[1] - int(a[1]))*60)).zfill(2)] for a in result]
 
+def formatLists(schedules, dailyActs):
+    schedules = [[[(lambda pair: int(pair[0]) + (int(pair[1]) / 60))(l.split(":")), (lambda pair: int(pair[0]) + (int(pair[1]) / 60))(r.split(":"))] for l, r in sched] for sched in schedules]
+    dailyActs = [[float(time.split(':')[0]) + float(time.split(':')[1]) / 60 for time in sublist] for sublist in dailyActs]
+    return schedules, dailyActs
 
-#This is placed here to read the input file
-#Will complete once we've determined how to account for more than 2 people.
-input = open('input.txt', 'r')
-Lines = input.readlines()
 
-person1_Schedule = [['7:00', '8:30'],  ['12:00', '13:00'],  ['16:00', '18:00']]
-person1_DailyAct = ['9:00', '19:00']
-
-person2_Schedule = [['9:00', '10:30'],  ['12:20', '13:30'],  ['14:00', '15:00'], ['16:00', '17:00' ]]
-person2_DailyAct = ['9:00', '18:30']
-duration_of_meeting = 30
-
-print(timeScheduler(person1_Schedule, person2_Schedule, person1_DailyAct, person2_DailyAct, duration_of_meeting))
+#Opens up the file and checks how many testcases there are
+#to put in "count" variable
+with open('input.txt') as f:
+    contents = f.read()
+    count = contents.count("test_case")
+#Reads while file and executes it into the terminal
+exec(open('input.txt').read())
+for i in range(1, count+1):
+    #Executes the contents of the variables in input.txt into the terminal to get schedules.
+    exec(globals()['test_case' + str(i)])
+    schedules, dailyActs = formatLists(schedules, dailyActs)
+    #Executes algorithm in order to solve problem
+    print(timeScheduler(schedules, dailyActs, duration_of_meeting))
