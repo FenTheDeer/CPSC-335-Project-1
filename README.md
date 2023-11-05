@@ -1,7 +1,7 @@
 # CPSC-335-Project-1
 Project 1: Implementing Algorithm for CPSC-335
 
-Nathanel Gries (*email here*)
+Nathanel Gries ( nathanelgroes@csu.fullerton.edu )
 
 Leonardo Medrano ( lm1014367@csu.fullerton.edu )
 
