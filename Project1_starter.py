@@ -78,6 +78,17 @@ exec(open('input.txt').read())
 for i in range(1, count+1):
     #Executes the contents of the variables in input.txt into the terminal to get schedules.
     exec(globals()['test_case' + str(i)])
+    print("\nTest case", i)
+    #Prints out the schedules and login/logout times for each tet case
+    print("Busy schedules per person: ")
+    [print(a) for a in schedules]
+    print("\nLogin/Logout times per person: ")
+    [print(a) for a in dailyActs]
+
     schedules, dailyActs = formatLists(schedules, dailyActs)
     #Executes algorithm in order to solve problem
+    print("\nTime intervals for meetings: ")
+    #Prints out the solution
     print(timeScheduler(schedules, dailyActs, duration_of_meeting))
+
+    print("----------------------------------")
